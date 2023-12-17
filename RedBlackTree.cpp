@@ -10,24 +10,24 @@ typedef enum{
     BLACK,
     RED
 }RB_COLOR;
-struct Node{
+template<typename U> struct Node{
     Node *p;
     Node *l;
     Node *r;
-    int key;
+    U key;
     RB_COLOR color;
 };
-class RedBlackTree{
+template<typename U> class RedBlackTree{
     private:
-        Node* NIL;
-        Node* root;
-        vector<int> inorder_list;
-        vector<int> preorder_list;
-        vector<int> postorder_list;
+        Node<U>* NIL;
+        Node<U>* root;
+        vector<U> inorder_list;
+        vector<U> preorder_list;
+        vector<U> postorder_list;
         int is_init_orders_list;
         // xを基準に左回転する.
-        void left_rotate(Node* x){
-            Node* y = x->r;
+        void left_rotate(Node<U>* x){
+            Node<U>* y = x->r;
             x->r = y->l;
             if(y->l!=NIL){
                 y->l->p = x;
@@ -47,8 +47,8 @@ class RedBlackTree{
         }
 
         // xを基準に右回転する.
-        void right_rotate(Node* x){
-            Node* y = x->l;
+        void right_rotate(Node<U>* x){
+            Node<U>* y = x->l;
             x->l = y->r;
             if(y->r!=NIL){
                 y->r->p = x;
@@ -67,11 +67,11 @@ class RedBlackTree{
             x->p = y;
         }
         // insertによって違反した性質を回復するための操作
-        void insert_fixup(Node* z){
+        void insert_fixup(Node<U>* z){
             while(z->p->color==RB_COLOR::RED){
                 if(z->p == z->p->p->l){
                     // zの親が左の子だった場合
-                    Node* y = z->p->p->r;
+                    Node<U>* y = z->p->p->r;
                     if(y->color == RB_COLOR::RED){
                         // case1:zの叔父が赤だった場合
                         z->p->p->color = RB_COLOR::RED; // これは必ず黒色のため(property4より)
@@ -95,7 +95,7 @@ class RedBlackTree{
                 else{
                     // zの親が右の子だった場合(左と対称的)
                     // ちゃんと確認していないため, うまく動作しなかったらここが問題の可能性あり
-                    Node*y = z->p->p->l;
+                    Node<U>*y = z->p->p->l;
                     if(y->color == RB_COLOR::RED){
                         // case1: zのおじが赤だった場合
                         z->p->p->color = RB_COLOR::RED;
@@ -120,11 +120,11 @@ class RedBlackTree{
         }
 
         // delete_atによって違反した性質を回復する.
-        void delete_at_fixup(Node* x){
+        void delete_at_fixup(Node<U>* x){
             while(x!=root && x->color==RB_COLOR::BLACK){
                 if(x->p->l == x){
                     // 左の子の場合
-                    Node* w = x->p->r; // 兄弟を持っておく
+                    Node<U>* w = x->p->r; // 兄弟を持っておく
                     if(w->color == RB_COLOR::RED){
                         // case1: wが赤の場合
                         // 赤が隣接することはないため, x->pは黒
@@ -156,7 +156,7 @@ class RedBlackTree{
                 }
                 else{
                     // 右の子の場合. 左の子と対称的になる.
-                    Node* w = x->p->l;
+                    Node<U>* w = x->p->l;
                     if(w->color == RB_COLOR::RED){
                         // case1: wが赤の場合
                         w->color = RB_COLOR::BLACK;
@@ -190,7 +190,7 @@ class RedBlackTree{
         }
 
         // uを根とする部分木をvを根とする部分木に置き換える
-        void transplant(Node* u,Node* v){
+        void transplant(Node<U>* u,Node<U>* v){
             v->p = u->p;
             if(u->p == NIL){
                 root = v;
@@ -203,23 +203,23 @@ class RedBlackTree{
             }
         }
         // subrootを根とする木に含まれる節点を削除する
-        void delete_node(Node* subroot){
+        void delete_node(Node<U>* subroot){
             if(subroot == NIL) return;
             delete_node(subroot->l);
             delete_node(subroot->r);
             delete(subroot);
         }
     public:
-        RedBlackTree(const vector<int> init_tree={}){
-            NIL = new Node;
+        RedBlackTree(const vector<U> init_tree={}){
+            NIL = new Node<U>;
             NIL->l = NIL;
             NIL->r = NIL;
             NIL->color = RB_COLOR::BLACK;
             root = NIL;
             is_init_orders_list = 1;
             // 配列の要素を赤黒木にinsert
-            for(int key : init_tree){
-                Node* node = new Node;
+            for(U key : init_tree){
+                Node<U>* node = new Node<U>;
                 node->key = key;
                 insert(node);
             }
@@ -229,21 +229,21 @@ class RedBlackTree{
             delete(NIL);
         }
         // 根を返す
-        Node* get_root(){
+        Node<U>* get_root(){
             return root;
         }
         // subrootを根とする木に含まれる要素の最小値を求める. (次節点を求めるためにも使われる)
-        Node* minimize(Node* subroot){
-            Node* z = subroot;
+        Node<U>* minimize(Node<U>* subroot){
+            Node<U>* z = subroot;
             while(z->l != NIL){
                 z = z->l;
             }
             return z;
         }
         // 要素zを追加する
-        void insert(Node* z){
-            Node* y = NIL;
-            Node* x = root;
+        void insert(Node<U>* z){
+            Node<U>* y = NIL;
+            Node<U>* x = root;
             while(x!=NIL){
                 y = x;
                 if(z->key < x->key){
@@ -275,10 +275,10 @@ class RedBlackTree{
 
 
         // 要素zを削除する.
-        void delete_at(Node* z){
-            Node* y = z;
+        void delete_at(Node<U>* z){
+            Node<U>* y = z;
             RB_COLOR y_origin_color = y->color;
-            Node* x = NIL;
+            Node<U>* x = NIL;
             if(z->l == NIL){
                 // 左の子がない場合
                 x = z->r;
@@ -321,7 +321,7 @@ class RedBlackTree{
             is_init_orders_list = 1;
         }
         // 要素の昇順(中順)を返す
-        vector<int> sort(){
+        vector<U> sort(){
             if(!is_init_orders_list){
                 return inorder_list;
             }
@@ -330,7 +330,7 @@ class RedBlackTree{
             return inorder_list;
         }
         // 先行順を返す
-        vector<int> preorder(){
+        vector<U> preorder(){
             if(!is_init_orders_list){
                 return preorder_list;
             }
@@ -340,7 +340,7 @@ class RedBlackTree{
         }
 
         // 後行順を返す
-        vector<int> postorder(){
+        vector<U> postorder(){
             if(!is_init_orders_list){
                 return postorder_list;
             }
@@ -349,7 +349,7 @@ class RedBlackTree{
             return postorder_list;
         }
         // subrootを根とした部分木を先行順・中順・後行順で要素を並べたものをpushする
-        void solve_order(const Node* subroot){
+        void solve_order(const Node<U>* subroot){
             if(subroot == NIL) return;
             preorder_list.push_back(subroot->key);
             solve_order(subroot->l);
@@ -359,8 +359,8 @@ class RedBlackTree{
         }
 
         // 要素zを持つノードを探索する. 見つけたらそのポインタを返して, なければNILを返す.
-        Node* find(int z){
-            Node* x = root;
+        Node<U>* find(U z){
+            Node<U>* x = root;
             while(x!=NIL){
                 if(x->key == z){
                     return x;
@@ -376,7 +376,7 @@ class RedBlackTree{
         }
 
         // 要素zを持つノードが存在するかどうか判定する
-        int is_find(int z){
+        int is_find(U z){
             if(find(z)!=NIL){
                 return 1;
             }
@@ -432,7 +432,7 @@ int main(){
     cin>>N;
     vector<int> A(N);
     for(int& a : A) cin>>a;
-    RedBlackTree rb(A);
+    RedBlackTree<int> rb(A);
     for(int v : rb.sort()) cout<<v<<" ";
     cout<<endl;
     
