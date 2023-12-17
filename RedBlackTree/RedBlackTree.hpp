@@ -1,15 +1,19 @@
 /***
+ * 赤黒木の実装
  * 参考: Introduction to Algorithm
  * TODO: 性質が正しく満たされることの証明を書いとく.
 */
 #include<iostream>
 #include<vector>
 #include<cassert>
-using namespace std;
+
+// 赤黒木のcolor属性の値
 typedef enum{
     BLACK,
     RED
 }RB_COLOR;
+
+// ノードを表す構造体
 template<typename U> struct Node{
     Node *p;
     Node *l;
@@ -17,13 +21,15 @@ template<typename U> struct Node{
     U key;
     RB_COLOR color;
 };
+
+// 赤黒木のクラス
 template<typename U> class RedBlackTree{
     private:
         Node<U>* NIL;
         Node<U>* root;
-        vector<U> inorder_list;
-        vector<U> preorder_list;
-        vector<U> postorder_list;
+        std::vector<U> inorder_list;
+        std::vector<U> preorder_list;
+        std::vector<U> postorder_list;
         int is_init_orders_list;
         // xを基準に左回転する.
         void left_rotate(Node<U>* x){
@@ -210,7 +216,7 @@ template<typename U> class RedBlackTree{
             delete(subroot);
         }
     public:
-        RedBlackTree(const vector<U> init_tree={}){
+        RedBlackTree(const std::vector<U> init_tree={}){
             NIL = new Node<U>;
             NIL->l = NIL;
             NIL->r = NIL;
@@ -321,7 +327,7 @@ template<typename U> class RedBlackTree{
             is_init_orders_list = 1;
         }
         // 要素の昇順(中順)を返す
-        vector<U> sort(){
+        std::vector<U> sort(){
             if(!is_init_orders_list){
                 return inorder_list;
             }
@@ -330,7 +336,7 @@ template<typename U> class RedBlackTree{
             return inorder_list;
         }
         // 先行順を返す
-        vector<U> preorder(){
+        std::vector<U> preorder(){
             if(!is_init_orders_list){
                 return preorder_list;
             }
@@ -340,7 +346,7 @@ template<typename U> class RedBlackTree{
         }
 
         // 後行順を返す
-        vector<U> postorder(){
+        std::vector<U> postorder(){
             if(!is_init_orders_list){
                 return postorder_list;
             }
@@ -394,82 +400,3 @@ template<typename U> class RedBlackTree{
             }
         }
 };
-
-int main(){
-    // verified (https://algo-method.com/tasks/920 )
-    /*
-    int Q;
-    cin>>Q;
-    RedBlackTree rb;
-    while(Q--){
-        int op;
-        cin>>op;
-        if(op==0){
-            int k;
-            cin>>k;
-            Node* node = new Node;
-            node->key = k;
-            rb.insert(node);
-        }
-        else if(op==1){
-            int k;
-            cin>>k;
-            if(rb.is_find(k)){
-                cout<<"Yes"<<endl;
-            }
-            else{
-                cout<<"No"<<endl;
-            }
-        }
-        else if(op==2){
-            int k;
-            cin>>k;
-            if(rb.is_find(k)){
-                rb.delete_at(rb.find(k));
-                cout<<"Complete"<<endl;
-            }
-            else{
-                cout<<"Error"<<endl;
-            }
-        }
-    }
-    return 0;
-    */
-    // verified(https://algo-method.com/tasks/442)
-    /*
-    int N;
-    cin>>N;
-    vector<int> A(N);
-    for(int& a : A) cin>>a;
-    RedBlackTree<int> rb(A);
-    for(int v : rb.sort()) cout<<v<<" ";
-    cout<<endl;
-    return 0;
-    */
-   // verified(https://atcoder.jp/contests/abc137/tasks/abc137_d) 
-   int N,M;
-   cin>>N>>M;
-   RedBlackTree<pair<long long,int>> rb;
-   vector<vector<long long>> D(M+1);
-   for(int i=0;i<N;i++){
-    int A;
-    long long B;
-    cin>>A>>B;
-    if(A>M) continue;
-    D[A].push_back(B);
-   }
-    long long ans = 0;
-    for(int A=1;A<=M;A++){
-        for(long long B : D[A]){
-            Node<pair<long long,int>>* node = new Node<pair<long long,int>>;
-            node->key = {-B,A};
-            rb.insert(node);
-        }
-        if(!rb.empty()){
-            Node<pair<long long,int>>* min = rb.minimize(rb.get_root());
-            ans += -1*min->key.first;
-            rb.delete_at(min);
-        }
-    }
-    cout<<ans<<endl;
-}
