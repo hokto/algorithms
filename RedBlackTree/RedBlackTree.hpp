@@ -213,7 +213,7 @@ template<typename U> class RedBlackTree{
             if(subroot == NIL) return;
             delete_node(subroot->l);
             delete_node(subroot->r);
-            delete(subroot);
+            delete subroot;
         }
     public:
         RedBlackTree(const std::vector<U> init_tree={}){
@@ -232,7 +232,7 @@ template<typename U> class RedBlackTree{
         }
         ~RedBlackTree(){
             delete_node(root);
-            delete(NIL);
+            delete NIL;
         }
         // 根を返す
         Node<U>* get_root(){
