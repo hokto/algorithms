@@ -73,7 +73,7 @@ int main(){
             node->key = {-B,A};
             rb.insert(node);
         }
-        if(!rb.empty()){
+        if(!rb.is_empty()){
             Node<pair<long long,int>>* min = rb.minimize(rb.get_root());
             ans += -1*min->key.first;
             rb.delete_at(min);

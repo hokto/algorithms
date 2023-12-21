@@ -30,7 +30,7 @@ template<typename U> class RedBlackTree{
         std::vector<U> inorder_list;
         std::vector<U> preorder_list;
         std::vector<U> postorder_list;
-        int is_init_orders_list;
+        int is_init_orders;
         // xを基準に左回転する.
         void left_rotate(Node<U>* x){
             Node<U>* y = x->r;
@@ -222,7 +222,7 @@ template<typename U> class RedBlackTree{
             NIL->r = NIL;
             NIL->color = RB_COLOR::BLACK;
             root = NIL;
-            is_init_orders_list = 1;
+            is_init_orders = 1;
             // 配列の要素を赤黒木にinsert
             for(U key : init_tree){
                 Node<U>* node = new Node<U>;
@@ -320,52 +320,58 @@ template<typename U> class RedBlackTree{
             }
         }
         // order_listを全て初期化する
-        void init_orders_list(){
+        void init_orders(){
             preorder_list.clear();
             inorder_list.clear();
             postorder_list.clear();
-            is_init_orders_list = 1;
+            is_init_orders = 1;
         }
-        // 要素の昇順(中順)を返す
-        std::vector<U> sort(){
-            if(!is_init_orders_list){
+        // 中順を返す
+        std::vector<U> get_inorder(){
+            if(!is_init_orders){
                 return inorder_list;
             }
-            solve_order(root);
-            is_init_orders_list = 0;
+            solve_orders(root);
+            is_init_orders = 0;
             return inorder_list;
         }
+
+        // 要素の昇順を返す(実際には中順と等価)
+        std::vector<U> sort(){
+            return get_inorder();
+        }
+
         // 先行順を返す
-        std::vector<U> preorder(){
-            if(!is_init_orders_list){
+        std::vector<U> get_preorder(){
+            if(!is_init_orders){
                 return preorder_list;
             }
-            solve_order(root);
-            is_init_orders_list = 0;
+            solve_orders(root);
+            is_init_orders = 0;
             return preorder_list;
         }
 
         // 後行順を返す
-        std::vector<U> postorder(){
-            if(!is_init_orders_list){
+        std::vector<U> get_postorder(){
+            if(!is_init_orders){
                 return postorder_list;
             }
-            solve_order(root);
-            is_init_orders_list = 0;
+            solve_orders(root);
+            is_init_orders = 0;
             return postorder_list;
         }
         // subrootを根とした部分木を先行順・中順・後行順で要素を並べたものをpushする
-        void solve_order(const Node<U>* subroot){
+        void solve_orders(const Node<U>* subroot){
             if(subroot == NIL) return;
             preorder_list.push_back(subroot->key);
-            solve_order(subroot->l);
+            solve_orders(subroot->l);
             inorder_list.push_back(subroot->key);
-            solve_order(subroot->r);
+            solve_orders(subroot->r);
             postorder_list.push_back(subroot->key);
         }
 
         // 要素zを持つノードを探索する. 見つけたらそのポインタを返して, なければNILを返す.
-        Node<U>* find(U z){
+        Node<U>* find_node_by_key(U z){
             Node<U>* x = root;
             while(x!=NIL){
                 if(x->key == z){
@@ -382,8 +388,8 @@ template<typename U> class RedBlackTree{
         }
 
         // 要素zを持つノードが存在するかどうか判定する
-        int is_find(U z){
-            if(find(z)!=NIL){
+        int is_find_node_by_key(U z){
+            if(is_find_node_by_key(z)!=NIL){
                 return 1;
             }
             else{
@@ -391,7 +397,7 @@ template<typename U> class RedBlackTree{
             }
         }
         // 赤黒木が空かどうか
-        int empty(){
+        int is_empty(){
             if(root == NIL){
                 return true;
             }
