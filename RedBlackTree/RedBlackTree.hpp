@@ -3,6 +3,8 @@
  * 参考: Introduction to Algorithm
  * TODO: 性質が正しく満たされることの証明を書いとく.
 */
+#ifndef MY_REDBLACKTREE_HPP // 多重インクルード防止
+#define MY_REDBLACKTREE_HPP 1
 #include<iostream>
 #include<vector>
 #include<cassert>
@@ -406,3 +408,4 @@ template<typename U> class RedBlackTree{
             }
         }
 };
+#endif
