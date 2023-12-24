@@ -1,7 +1,6 @@
 /***
  * 赤黒木の実装
  * 参考: Introduction to Algorithm
- * TODO: 性質が正しく満たされることの証明を書いとく.
 */
 #ifndef MY_REDBLACKTREE_HPP // 多重インクルード防止
 #define MY_REDBLACKTREE_HPP 1
@@ -102,7 +101,6 @@ template<typename U> class RedBlackTree{
                 }
                 else{
                     // zの親が右の子だった場合(左と対称的)
-                    // ちゃんと確認していないため, うまく動作しなかったらここが問題の可能性あり
                     Node<U>*y = z->p->p->l;
                     if(y->color == RB_COLOR::RED){
                         // case1: zのおじが赤だった場合
